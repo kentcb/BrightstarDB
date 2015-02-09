@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Nancy.ViewEngines;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -2131,6 +2132,24 @@ where {
         MyEntityContext CreateEntityContext(string storeName)
         {
             return new MyEntityContext("type=embedded;storesdirectory=c:\\brightstar;storename=" + storeName);
+        }
+
+        [Test]
+        public void TestLookupIdContainingSpaces()
+        {
+            var storeName = "TestLookupIdContainingSpaces_" + DateTime.Now.Ticks;
+            using (var context = CreateEntityContext(storeName))
+            {
+                var e = new Entity {Id = "foo bar", SomeString="Test"};
+                context.Entities.Add(e);
+                context.SaveChanges();
+            }
+            using (var context = CreateEntityContext(storeName))
+            {
+                var e = context.Entities.FirstOrDefault(x => x.Id.Equals("foo bar"));
+                Assert.That(e, Is.Not.Null);
+                Assert.That(e.SomeString, Is.EqualTo("Test"));
+            }
         }
     }
 

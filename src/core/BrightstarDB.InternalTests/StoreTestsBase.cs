@@ -106,6 +106,28 @@ namespace BrightstarDB.InternalTests
             Assert.IsFalse(triples[0].IsLiteral);
         }
 
+        public virtual void TestIriUnescapingInLookup()
+        {
+            var t = new Triple
+            {
+                Subject = "http://example.com/resource/foo bar",
+                Predicate = "http://example.com/p",
+                Object = "http://example.com/o"
+            };
+            var storeName = "TestIriUnescapingInLookup_" + DateTime.Now.Ticks;
+            var storePath = Path.Combine(Configuration.StoreLocation, storeName);
+            var store = StoreManager.CreateStore(storePath);
+            store.InsertTriple(t);
+            store.Commit(Guid.Empty);
+
+            store = StoreManager.OpenStore(storePath, true);
+            var triples = store.GetResourceStatements("http://example.com/resource/foo bar").ToList();
+            Assert.AreEqual(1, triples.Count);
+            Assert.AreEqual("http://example.com/resource/foo bar", triples[0].Subject);
+            Assert.AreEqual("http://example.com/p", triples[0].Predicate);
+            Assert.AreEqual("http://example.com/o", triples[0].Object);
+        }
+
         public virtual void TestGetAllTriples()
         {
             var t = new Triple

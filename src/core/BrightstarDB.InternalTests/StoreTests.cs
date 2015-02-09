@@ -54,6 +54,12 @@ namespace BrightstarDB.InternalTests
         }
 
         [Test]
+        public override void TestIriUnescapingInLookup()
+        {
+            base.TestIriUnescapingInLookup();
+        }
+
+        [Test]
         public override void TestGetAllTriples()
         {
             base.TestGetAllTriples();
