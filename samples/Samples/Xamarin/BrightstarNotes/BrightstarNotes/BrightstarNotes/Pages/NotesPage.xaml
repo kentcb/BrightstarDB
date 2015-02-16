@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="clr-namespace:BrightstarNotes.Converters;assembly=BrightstarNotes"
+             x:Class="BrightstarNotes.Pages.NotesPage">
+  <ContentPage.Resources>
+    <ResourceDictionary>
+      <converters:NotConverter x:Key="NotConverter"/>
+     </ResourceDictionary>
+  </ContentPage.Resources>
+  <StackLayout>
+	<Label Text="Brightstar Notes" VerticalOptions="Start" HorizontalOptions="Center" />
+  <ListView ItemsSource="{Binding Notes}" VerticalOptions="FillAndExpand" IsVisible="{Binding HasItems}">
+    <ListView.ItemTemplate>
+      <DataTemplate>
+        <ViewCell>
+          <ViewCell.View>
+            <StackLayout Orientation="Vertical">
+              <Label Text="{Binding Title}" VerticalOptions="FillAndExpand"/>
+              <Label FontSize="8" Text="{Binding ShortContent}"/>
+            </StackLayout>
+          </ViewCell.View>
+        </ViewCell>
+      </DataTemplate>
+    </ListView.ItemTemplate>
+  </ListView>
+  <Label Text="You have no notes yet!" IsVisible="{Binding HasItems, Converter={StaticResource NotConverter}}" 
+         VerticalOptions="CenterAndExpand" 
+          HorizontalOptions="CenterAndExpand" BackgroundColor="Aqua" TextColor="Black"/>
+  <Button Text="Add Note" VerticalOptions="End" HorizontalOptions="CenterAndExpand"/>
+    </StackLayout>
+</ContentPage>
