@@ -90,8 +90,6 @@
                     }
                 });
 
-            //var workspace = MSBuildWorkspace.Create();
-            //var solution = await workspace.OpenSolutionAsync(solutionPath);
             var compilations = await Task.WhenAll(
                 solution
                     .Projects
