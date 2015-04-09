@@ -46,7 +46,7 @@
                 var solution = workspace.CurrentSolution;
 
                 var results = await Generator
-                    .GenerateMocksAsync(
+                    .GenerateAsync(
                         language,
                         solution,
                         "BrightstarDB.CodeGeneration.Tests",
@@ -62,9 +62,9 @@
                 // make sure version changes don't break the tests
                 expectedCode = expectedCode.Replace("$VERSION$", typeof(BrightstarException).Assembly.GetName().Version.ToString());
 
-                // useful when converting generated code to something that can be pasted into an expectation file
-                var sanitisedResult = result.Replace("1.10.0.0", "$VERSION$");
-                System.Diagnostics.Debug.WriteLine(sanitisedResult);
+                //// useful when converting generated code to something that can be pasted into an expectation file
+                //var sanitisedResult = result.Replace("1.10.0.0", "$VERSION$");
+                //System.Diagnostics.Debug.WriteLine(sanitisedResult);
 
                 Assert.AreEqual(expectedCode, result);
             }
@@ -102,7 +102,7 @@
                 try
                 {
                     var results = await Generator
-                        .GenerateMocksAsync(
+                        .GenerateAsync(
                             language,
                             solution,
                             "BrightstarDB.CodeGeneration.Tests",
