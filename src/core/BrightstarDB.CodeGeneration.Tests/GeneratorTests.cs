@@ -39,7 +39,8 @@
                     metadataReferences: new[]
                     {
                         MetadataReference.CreateFromAssembly(typeof(object).Assembly),
-                        MetadataReference.CreateFromAssembly(typeof(Uri).Assembly)
+                        MetadataReference.CreateFromAssembly(typeof(Uri).Assembly),
+                        MetadataReference.CreateFromAssembly(typeof(BrightstarException).Assembly)
                     });
                 var project = workspace.AddProject(projectInfo);
                 workspace.AddDocument(projectId, "Source.cs", SourceText.From(inputStream));
@@ -93,7 +94,8 @@
                     metadataReferences: new[]
                     {
                         MetadataReference.CreateFromAssembly(typeof(object).Assembly),
-                        MetadataReference.CreateFromAssembly(typeof(Uri).Assembly)
+                        MetadataReference.CreateFromAssembly(typeof(Uri).Assembly),
+                        MetadataReference.CreateFromAssembly(typeof(BrightstarException).Assembly)
                     });
                 var project = workspace.AddProject(projectInfo);
                 workspace.AddDocument(projectId, "Source.cs", SourceText.From(inputStream));

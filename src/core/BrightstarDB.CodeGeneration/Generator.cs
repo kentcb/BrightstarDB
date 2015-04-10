@@ -147,8 +147,6 @@
                     .Select(async x =>
                     {
                         var compilation = await x.GetCompilationAsync();
-                        // make sure the compilation has a reference to BrightstarDB
-                        compilation = compilation.AddReferences(MetadataReference.CreateFromAssembly(typeof(BrightstarException).Assembly));
                         return new { Project = x, Compilation = compilation };
                     }));
 
@@ -200,36 +198,9 @@
                         x.InterfaceSymbol))
                 .ToList();
 
-            Compilation entityContextCompilation;
-
-            switch (language)
-            {
-                case Language.CSharp:
-                    entityContextCompilation = CSharpCompilation.Create(
-                        "Ignore",
-                        references: new[]
-                        {
-                            MetadataReference.CreateFromAssembly(typeof(object).Assembly),
-                            MetadataReference.CreateFromAssembly(typeof(BrightstarException).Assembly)
-                        });
-                    break;
-                case Language.VisualBasic:
-                    entityContextCompilation = VB.VisualBasicCompilation.Create(
-                        "Ignore",
-                        references: new[]
-                        {
-                            MetadataReference.CreateFromAssembly(typeof(object).Assembly),
-                            MetadataReference.CreateFromAssembly(typeof(BrightstarException).Assembly)
-                        });
-                    break;
-                default:
-                    throw new NotSupportedException();
-            }
-
             var context = GenerateContext(
                 language,
                 solution,
-                entityContextCompilation,
                 contextNamespace,
                 contextName,
                 interfaceSymbols,
@@ -245,13 +216,32 @@
         private static SyntaxNode GenerateContext(
             Language language,
             Solution solution,
-            Compilation compilation,
             string @namespace,
             string name,
             IImmutableList<INamedTypeSymbol> interfaceSymbols,
             Func<INamedTypeSymbol, string> entityNamespaceSelector,
             Func<INamedTypeSymbol, string> entityNameSelector)
         {
+            Compilation compilation;
+            var references = new[]
+            {
+                MetadataReference.CreateFromAssembly(typeof(object).Assembly),
+                MetadataReference.CreateFromAssembly(typeof(BrightstarException).Assembly)
+            };
+
+            // we create our own compilation with which to generate the entity context
+            switch (language)
+            {
+                case Language.CSharp:
+                    compilation = CSharpCompilation.Create("Ignore", references: references);
+                    break;
+                case Language.VisualBasic:
+                    compilation = VB.VisualBasicCompilation.Create("Ignore", references: references);
+                    break;
+                default:
+                    throw new NotSupportedException();
+            }
+
             var syntaxGenerator = SyntaxGenerator.GetGenerator(solution.Workspace, language.ToSyntaxGeneratorLanguageName());
             var generator = new EntityContextGenerator(
                 language,
@@ -420,10 +410,14 @@
             {
                 var baseType = compilation
                     .GetTypeByMetadataName(typeof(BrightstarEntityContext).FullName);
-
+                
                 if (baseType == null)
                 {
-                    throw new InvalidOperationException("Failed to find type in BrightstarDB assembly. Are you sure this project has a reference to BrightstarDB?");
+                    throw new InvalidOperationException(
+                        string.Format(
+                            CultureInfo.InvariantCulture,
+                            "Failed to find type in BrightstarDB assembly. Are you sure assembly {0} has a reference to BrightstarDB?",
+                            compilation.AssemblyName));
                 }
 
                 return syntaxGenerator
@@ -828,7 +822,11 @@
 
                 if (baseType == null)
                 {
-                    throw new InvalidOperationException("Failed to find type in BrightstarDB assembly. Are you sure this project has a reference to BrightstarDB?");
+                    throw new InvalidOperationException(
+                        string.Format(
+                            CultureInfo.InvariantCulture,
+                            "Failed to find type in BrightstarDB assembly. Are you sure assembly {0} has a reference to BrightstarDB?",
+                            compilation.AssemblyName));
                 }
 
                 return syntaxGenerator
