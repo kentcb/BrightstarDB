@@ -134,21 +134,21 @@ namespace BrightstarDB
 
         private static void WriteLog(LogLevel lvl, string msg, params object[] args)
         {
-            var logMessage = DateTime.Now.ToString(System.Globalization.CultureInfo.CurrentCulture) +
-                             " (" + ThreadId + ") : " + lvl + " : " + msg;
-            if (args != null)
-            {
-                Debug.WriteLine(logMessage, args);
-            }
-            else
-            {
-                Debug.WriteLine(logMessage);
-            }
-            if (_logFileName != null)
-            {
-                LogQueue.Enqueue(new LogItem(logMessage, args));
-                Wait.Set();
-            }
+            //var logMessage = DateTime.Now.ToString(System.Globalization.CultureInfo.CurrentCulture) +
+            //                 " (" + ThreadId + ") : " + lvl + " : " + msg;
+            //if (args != null)
+            //{
+            //    Debug.WriteLine(logMessage, args);
+            //}
+            //else
+            //{
+            //    Debug.WriteLine(logMessage);
+            //}
+            //if (_logFileName != null)
+            //{
+            //    LogQueue.Enqueue(new LogItem(logMessage, args));
+            //    Wait.Set();
+            //}
         }
 
         internal static void LogInfo(string msg, params object[] args)
